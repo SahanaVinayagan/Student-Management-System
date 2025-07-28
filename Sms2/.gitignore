@@ -1,0 +1,24 @@
+# === Java Compilation Artifacts ===
+*.class
+*.jar
+*.war
+*.log
+
+# === Directories to Ignore ===
+lib/
+csvfolder/
+target/
+bin/
+
+# === IDE-specific Files ===
+/.idea/
+/.vscode/
+/*.iml
+
+# === OS Metadata ===
+.DS_Store
+Thumbs.db
+
+# === Generated/Exported Files ===
+*.csv
+*.code-workspace
