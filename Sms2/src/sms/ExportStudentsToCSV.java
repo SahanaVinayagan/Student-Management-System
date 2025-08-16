@@ -17,7 +17,7 @@ public class ExportStudentsToCSV {
             ResultSet rs = stmt.executeQuery();
 
             // Specify the full path to the CSV file
-            FileWriter csvWriter = new FileWriter("exported_students_csvfile.csv");    //enter the path where you want to save the CSV file
+            FileWriter csvWriter = new FileWriter("exported_students_csvfile.csv");    //enter the path of the CSV file
             csvWriter.append("ID,Full Name,USN,Branch,Semester,CGPA,Days Present,Total Days,Attendance,Password\n");
 
             while (rs.next()) {

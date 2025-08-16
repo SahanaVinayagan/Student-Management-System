@@ -3,7 +3,6 @@ package sms;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
 import java.sql.*;
 
 public class ViewStudentsFrame extends JFrame {
@@ -25,7 +24,7 @@ public class ViewStudentsFrame extends JFrame {
     private void setupUI(boolean isTeacher) {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Search Panel
+        // 🔍 Search Panel
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(new JLabel("Search by USN:"));
         searchField = new JTextField(20);
@@ -40,13 +39,10 @@ public class ViewStudentsFrame extends JFrame {
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
+            // ✅ No password column
             String[] columnNames = {
                 "Full Name", "USN", "Branch", "Semester", "CGPA", "Days Present", "Total Days Marked", "Attendance %"
             };
-
-            if (isTeacher) {
-                columnNames = addPasswordColumn(columnNames);
-            }
 
             model = new DefaultTableModel(columnNames, 0);
             while (rs.next()) {
@@ -61,11 +57,6 @@ public class ViewStudentsFrame extends JFrame {
                     rs.getFloat("attendance_percent")
                 };
 
-                if (isTeacher) {
-                    String password = getStudentPassword(rs.getString("usn"));
-                    rowData = addPasswordToRow(rowData, password);
-                }
-
                 model.addRow(rowData);
             }
 
@@ -78,7 +69,7 @@ public class ViewStudentsFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Error loading student data.");
         }
 
-        // Search button action
+        // 🔍 Search button action
         searchButton.addActionListener(e -> highlightUSN(searchField.getText().trim()));
 
         add(mainPanel);
@@ -97,34 +88,5 @@ public class ViewStudentsFrame extends JFrame {
         }
 
         JOptionPane.showMessageDialog(this, "USN not found.");
-    }
-
-    private String[] addPasswordColumn(String[] columnNames) {
-        String[] extended = new String[columnNames.length + 1];
-        System.arraycopy(columnNames, 0, extended, 0, columnNames.length);
-        extended[columnNames.length] = "Password";
-        return extended;
-    }
-
-    private Object[] addPasswordToRow(Object[] rowData, String password) {
-        Object[] extended = new Object[rowData.length + 1];
-        System.arraycopy(rowData, 0, extended, 0, rowData.length);
-        extended[rowData.length] = password;
-        return extended;
-    }
-
-    private String getStudentPassword(String usn) {
-        try (Connection conn = Database.getConnection()) {
-            String sql = "SELECT original_password FROM student_logins WHERE usn = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, usn);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("original_password");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "N/A";
     }
 }
